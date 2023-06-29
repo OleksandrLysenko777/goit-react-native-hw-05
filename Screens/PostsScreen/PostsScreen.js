@@ -1,8 +1,5 @@
 import { Image } from "react-native";
 import {
-  Dimensions,
-  Keyboard,
-  KeyboardAvoidingView,
   StyleSheet,
 } from "react-native";
 import { Text, View } from "react-native";

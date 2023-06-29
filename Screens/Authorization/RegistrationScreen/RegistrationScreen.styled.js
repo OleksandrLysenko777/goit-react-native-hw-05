@@ -134,6 +134,13 @@ const styles = StyleSheet.create({
     stroke: "#e8e8e8",
     backgroundColor: "#ffffff",
   },
+  logOut: {
+    width: 24,
+    height: 24,
+    marginRight: 60,
+    marginRight: 16,
+    paddingVertical: 10,
+  },
 });
 
 export const {
