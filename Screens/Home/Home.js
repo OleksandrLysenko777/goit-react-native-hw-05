@@ -83,7 +83,7 @@ const Home = () => {
         name="Profile"
         component={ProfileScreen}
         options={({ navigation, route }) => ({
-          ...createPostsOptions,
+          ...createPostsProfile,
           headerLeft: () => (
             <ArrowLeft
               onPress={() => navigation.navigate("Posts")}
@@ -155,7 +155,23 @@ const createPostsOptions = {
     textAlign: "center",
   },
 };
-
+const createPostsProfile = {
+  title: "Профіль",
+  headerStyle: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: "rgba(0, 0, 0, 0.3)",
+    boxShadow: "0px 0.5px 0px rgba(0, 0, 0, 0.3)",
+  },
+  headerTintColor: "#212121",
+  headerTitleStyle: {
+    fontFamily: "Roboto_700Bold",
+    fontStyle: "normal",
+    fontWeight: "bold",
+    fontSize: 17,
+    lineHeight: 22,
+    textAlign: "center",
+  },
+};
 const postsOptions = {
   title: "Публікації",
   headerStyle: {

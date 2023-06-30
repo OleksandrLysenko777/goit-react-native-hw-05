@@ -34,9 +34,11 @@ const ProfileScreen = ({ navigation }) => {
   return (
     <View style={container}>
       <ImageBackground source={backgroundImg} style={bgContainer}>
-        <View style={{ ...contentWrapper, minHeight: "61%", maxHeight: "80%" }}>
+        <View style={{ ...contentWrapper, minHeight: "80%", maxHeight: "100%" }}>
           <View style={avatarWrapper}>
             <Image style={avatar} />
+            
+            
             <TouchableOpacity
               style={isAvatar ? btnAddAvatarLoad : btnAddAvatar}
               onPress={onLoadAvatar}
@@ -52,6 +54,7 @@ const ProfileScreen = ({ navigation }) => {
                 <LogOut />
               </TouchableOpacity>
             </TouchableOpacity>
+            
           </View>
           <Text
             style={{
@@ -60,7 +63,7 @@ const ProfileScreen = ({ navigation }) => {
               marginTop: 92,
             }}
           >
-            Natali Romanova
+            Oleksandr Lysenko
           </Text>
         </View>
       </ImageBackground>

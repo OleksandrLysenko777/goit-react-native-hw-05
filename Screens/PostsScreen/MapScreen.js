@@ -1,38 +1,31 @@
-import { useIsFocused } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
-import { Dimensions } from 'react-native';
-import { StyleSheet, Text } from 'react-native';
-import { View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import { useEffect, useState } from "react";
+import { Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
+import { Animated } from "react-native";
+
+import MapView, { Marker } from "react-native-maps";
 
 const MapScreen = ({ route, navigation }) => {
-  const isFocused = useIsFocused();
-
-  const [location, setLocation] = useState({});
+  const { longitude, latitude } = route.params.location;
 
   useEffect(() => {
-    if (isFocused) {
-      navigation?.getParent('Home')?.setOptions({
-        tabBarStyle: { display: 'none' },
-        headerShown: false,
-      });
-    }
-
-    if (route.params) setLocation(route.params.postLocation);
+    navigation.setOptions({ tabBarStyle: { display: "none" } });
   }, []);
 
   return (
     <View style={styles.container}>
       <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: 48.383022,
-          longitude: 31.1828699,
-          latitudeDelta: 0.006,
-          longitudeDelta: 0.006,
+        style={styles.mapStyle}
+        region={{
+          latitude,
+          longitude,
+          latitudeDelta: 0.0922,
+          longitudeDelta: 0.0421,
         }}
+        mapType="standard"
+        minZoomLevel={15}
       >
-        {location && <Marker title="It`s here" coordinate={location} />}
+        <Marker title="I am here" coordinate={{ latitude, longitude }} />
       </MapView>
     </View>
   );
@@ -43,12 +36,12 @@ export default MapScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  map: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+  mapStyle: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
 });

@@ -1,35 +1,77 @@
-import { Image } from "react-native";
+import { FlatList, Image } from "react-native";
 import {
   StyleSheet,
 } from "react-native";
 import { Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import PostsItem from "../components/PostsItem/PostsItem";
 
-const PostsScreen = () => {
+const PostsScreen = ({ route }) => {
+  const [posts, setPosts] = useState([
+    {
+      id: "Oleksandr",
+      postImg:
+        "file:///var/mobile/Containers/Data/Application/63E6D4A1-49BC-4A70-A8A3-27B27B56BC2F/Library/Caches/ExponentExperienceData/%2540direst2010%252Fgoit-react-native-hw-3/Camera/6180ADA2-BA3A-4096-ABB1-D5D02B5B5F74.jpg",
+      postName: "bałaganiarz",
+      postAddress: "Warszawa",
+      postLocation: { latitude: 52.234982, longitude: 21.008490 },
+    },
+    {
+      id: "Oleksandr",
+      postImg:
+        "file:///var/mobile/Containers/Data/Application/63E6D4A1-49BC-4A70-A8A3-27B27B56BC2F/Library/Caches/ExponentExperienceData/%2540direst2010%252Fgoit-react-native-hw-3/Camera/6180ADA2-BA3A-4096-ABB1-D5D02B5B5F74.jpg",
+      postName: "Grubas",
+      postAddress: "Koci dom",
+      postLocation: { latitude: 52.234982, longitude: 21.008490 },
+    }
+  ]);
+
+  useEffect(() => {
+    if (!route.params) return;
+
+    setPosts((prev) => [...prev, route.params]);
+  }, [route.params]);
+
   return (
     <View style={styles.container}>
       <View style={styles.avatarWrapper}>
         <Image style={styles.avatarImg} />
         <View>
-          <Text style={styles.avatarName}>Natali Romanova</Text>
+          <Text style={styles.avatarName}>Oleksandr Lysenko</Text>
           <Text style={styles.avatarEmail}>email@example.com</Text>
         </View>
       </View>
+      <FlatList
+        style={styles.postsWrapper}
+        data={posts}
+        renderItem={({ item }) => (
+          <PostsItem
+            postName={item.postName}
+            postImg={item.postImg}
+            postAddress={item.postAddress}
+            postLocation={item.postLocation}
+          />
+        )}
+        keyExtractor={(item, idx) => idx.toString()}
+      />
       <View style={styles.navTabs}></View>
     </View>
   );
 };
 
 export default PostsScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingVertical: 32,
+    paddingTop: 32,
     backgroundColor: "#fff",
   },
   avatarWrapper: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 32,
   },
   avatarImg: {
     width: 60,

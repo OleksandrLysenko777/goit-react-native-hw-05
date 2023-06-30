@@ -7,7 +7,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./Screens/Authorization/LoginScreen/LoginScreen";
 import RegistrationScreen from "./Screens/Authorization/RegistrationScreen/RegistrationScreen";
 import Home from "./Screens/Home/Home";
-import DefaultPostsScreen from "./Screens/PostsScreen/DefaultPostsScreen";
+import PostsScreen from "./Screens/PostsScreen/PostsScreen";
 
 import {
   useFonts,
@@ -16,7 +16,6 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/roboto";
 import PostsItem from "./Screens/components/PostsItem/PostsItem";
-
 
 const MainStack = createStackNavigator();
 
@@ -39,14 +38,12 @@ export default function App() {
               component={RegistrationScreen}
             />
             <MainStack.Screen name="Login" component={LoginScreen} />
-            <MainStack.Screen name="DefaultPosts" component={DefaultPostsScreen} />
+            <MainStack.Screen name="PostsScreen" component={PostsScreen} />
 
-            
             <MainStack.Screen name="Comments" component={PostsItem} />
             <MainStack.Screen name="Map" component={PostsItem} />
 
-
-            <MainStack.Screen name="Home" component={Home} />           
+            <MainStack.Screen name="Home" component={Home} />
           </MainStack.Navigator>
           <StatusBar style="auto" />
         </NavigationContainer>
