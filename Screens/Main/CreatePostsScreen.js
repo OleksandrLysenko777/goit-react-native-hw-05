@@ -96,7 +96,7 @@ const CreatePostsScreen = () => {
       postLocation: postLocation,
       commentCount: 0,
     };
-    navigation.navigate("PostsScreen", { newPost });
+    navigation.navigate("Posts", { newPost });
     clearForm();
   };
 
