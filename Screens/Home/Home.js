@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
+import { useRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import PostsScreen from "../PostsScreen/PostsScreen";
@@ -12,7 +13,10 @@ import Grid from "../../assets/svg/Grid";
 import User from "../../assets/svg/User";
 
 const ButtomTabs = createBottomTabNavigator();
-const Home = () => {
+const Home = (posts) => {
+  const route = useRoute();
+  const { params } = route;
+  const initialPosts = params?.userPosts || [];
   return (
     <ButtomTabs.Navigator
       screenOptions={() => ({
@@ -32,6 +36,7 @@ const Home = () => {
       <ButtomTabs.Screen
         name="Posts"
         component={PostsScreen}
+        initialParams={{ initialPosts }} 
         options={({ navigation }) => ({
           ...postsOptions,
           headerRight: () => (
@@ -82,6 +87,7 @@ const Home = () => {
       <ButtomTabs.Screen
         name="Profile"
         component={ProfileScreen}
+        initialParams={{ initialPosts }} 
         options={({ navigation, route }) => ({
           ...createPostsProfile,
           headerLeft: () => (

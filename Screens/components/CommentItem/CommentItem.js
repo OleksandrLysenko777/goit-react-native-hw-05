@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   commentWrapper: {
     padding: 16,
-    width: '100%',
+    
     backgroundColor: 'rgba(0, 0, 0, 0.03)',
     borderRadius: 6,
     width: Dimensions.get('window').width - 76,

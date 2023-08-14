@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import * as DocumentPicker from "expo-document-picker";
+import React, { useState, useEffect } from "react";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
@@ -55,19 +54,21 @@ const CreatePostsScreen = () => {
   }, []);
 
   const addImageLocation = async () => {
-    const location = await Location.getCurrentPositionAsync({});
-    const coords = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-
-    const [address] = await Location.reverseGeocodeAsync({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    });
-
-    setPostAddress(address.city);
-    setPostLocation(coords);
+    try {
+      const locationResult = await Location.geocodeAsync(postAddress);
+      if (locationResult.length > 0) {
+        const location = locationResult[0];
+        const coords = {
+          latitude: location.latitude,
+          longitude: location.longitude,
+        };
+        setPostLocation(coords);
+      } else {
+        console.log("No coordinates found for the given address");
+      }
+    } catch (error) {
+      console.error("Error while getting location:", error);
+    }
   };
 
   const clearForm = () => {
@@ -78,26 +79,34 @@ const CreatePostsScreen = () => {
   };
 
   const onSubmitPost = () => {
-    if (!postImg || !postName || !postLocation)
-      return console.warn("Будь-ласка, завантажте фото та заповніть поля");
+    console.log("onSubmitPost called");
+    if (!postImg || !postName || !postLocation) {
+      console.warn("Будь-ласка, завантажте фото та заповніть поля");
+      return;
+    }
 
-    console.log({ postImg, postName, postLocation });
+    console.log("Submitting post:", { postImg, postName, postLocation });
 
     handleKeyboardHide();
-    navigation.navigate("DefaultPosts", {
-      postImg,
+    const newPost = {
+      id: "Oleksandr",
+      postImg: postImg,
       postName: postName.trim(),
       postAddress: postAddress.trim(),
-      postLocation,
-    });
+      postLocation: postLocation,
+      commentCount: 0,
+    };
+    navigation.navigate("PostsScreen", { newPost });
     clearForm();
   };
 
   const onLoadPostImg = async () => {
+    console.log("onLoadPostImg called");
     if (cameraRef) {
       try {
         const { uri } = await cameraRef.takePictureAsync();
         await MediaLibrary.createAssetAsync(uri);
+        console.log("Image URI:", uri);
         setPostImg(uri);
       } catch (error) {
         console.log("Error > ", error.message);
@@ -202,7 +211,7 @@ const CreatePostsScreen = () => {
               placeholder="Назва..."
               autoComplete="off"
               autoCapitalize="none"
-              string={postName}
+              value={postName}
               onChangeText={setPostName}
               onFocus={() => handleFocus("postName")}
             />
@@ -220,9 +229,10 @@ const CreatePostsScreen = () => {
                 placeholder="Місцевість..."
                 autoComplete="off"
                 autoCapitalize="none"
-                string={postLocation}
-                onChangeText={setPostLocation}
+                value={postAddress}
+                onChangeText={setPostAddress}
                 onFocus={() => handleFocus("location")}
+                onBlur={addImageLocation}
               />
             </View>
           </View>
@@ -265,7 +275,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
-
   loadWrapper: {
     marginBottom: 32,
   },
@@ -300,7 +309,6 @@ const styles = StyleSheet.create({
     color: "#BDBDBD",
     textAlign: "center",
   },
-
   locationInputWrapper: {
     position: "relative",
     height: 50,
