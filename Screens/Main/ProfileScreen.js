@@ -8,6 +8,9 @@ import { Animated } from "react-native";
 import { TouchableOpacity, FlatList } from "react-native";
 import CirclePlus from "../../assets/svg/CirclePlus";
 import { useState } from "react";
+import { auth } from "../../firebaseConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { authSignOut } from "../../redux/authReducer"; 
 import {
   container,
   bgContainer,
@@ -25,47 +28,62 @@ import {
 } from "../Authorization/RegistrationScreen/RegistrationScreen.styled";
 import LogOut from "../../assets/svg/LogOut";
 import PostsItem from "../components/PostsItem/PostsItem";
+import { setPosts } from "../../redux/Post/postSlice";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [isAvatar, setAvatar] = useState(null);
+  const [displayName, setDisplayName] = useState("Oleksandr Lysenko");
+  const dispatch = useDispatch();
+   const posts = useSelector((state) => state.posts.posts);
+ const user = useSelector((state) => {
+  console.log(state); 
+  return state.auth.user;
+});
 
+  useEffect(() => {
+    console.log("Компонент ProfileScreen монтируется...");
+    const user = auth.currentUser;
+    if (user) {
+      setDisplayName(user.displayName || "Oleksandr Lysenko");
+    }
+  }, []);
   const onLoadAvatar = async () => {
     console.log("onLoadAvatar called");
     const avatarImg = await DocumentPicker.getDocumentAsync({
       type: "image/*",
     });
     console.log("Avatar image:", avatarImg);
+
     if (avatarImg.type === "cancel") return setAvatar(null);
+
     setAvatar(avatarImg);
+
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        await updateProfile(user, {
+          displayName: user.displayName || "defaultDisplayName",
+        });
+        console.log("Профіль успушно оновлений!");
+      } catch (error) {
+        console.error("Помилка оновлення:", error);
+      }
+    }
   };
 
-  const [posts, setPosts] = useState([
-    {
-      postImg:
-        "file:///var/mobile/Containers/Data/Application/63E6D4A1-49BC-4A70-A8A3-27B27B56BC2F/Library/Caches/ExponentExperienceData/%2540direst2010%252Fgoit-react-native-hw-3/Camera/6180ADA2-BA3A-4096-ABB1-D5D02B5B5F74.jpg",
-      postName: "Grubas",
-      postAddress: "Koci dom",
-      postLocation: { latitude: 52.234982, longitude: 21.00849 },
-      commentCount: 0,
-    },
-    {
-      postImg:
-        "file:///var/mobile/Containers/Data/Application/63E6D4A1-49BC-4A70-A8A3-27B27B56BC2F/Library/Caches/ExponentExperienceData/%2540direst2010%252Fgoit-react-native-hw-3/Camera/CB8F1366-4CB7-4A55-A65F-4EB209B10E0D.jpg",
-      postLocation: { latitude: 41.8892943, longitude: 12.4935467 },
-      postAddress: "Rome",
-      postName: "vs",
-      commentCount: 0,
-    },
-    {
-      postImg:
-        "file:///var/mobile/Containers/Data/Application/63E6D4A1-49BC-4A70-A8A3-27B27B56BC2F/Library/Caches/ExponentExperienceData/%2540direst2010%252Fgoit-react-native-hw-3/Camera/E22C4887-15E9-4E3C-B925-550FC26B9620.jpg",
-      postLocation: { latitude: 52.5187416, longitude: 13.4080224 },
-      postAddress: "Berlin",
-      postName: "hi",
-    },
-  ]);
+   const handleLogout = async () => {
+  try {
+    await dispatch(authSignOut());
+    navigation.navigate("Login");
+    console.log("Выход из системы выполнен успешно.");
+  } catch (error) {
+    console.error("Error logging out:", error);
+  }
+};
+
+ 
 
   useEffect(() => {
     const listener = new Animated.Value(0);
@@ -77,9 +95,14 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     if (route.params?.newPost) {
-      setPosts([...posts, route.params.newPost]);
+      if (!Array.isArray(posts)) {
+        posts = [];
+      }
+      dispatch(setPosts([...posts, route.params.newPost]));
+
+      navigation.setParams({ newPost: null });
     }
-  }, [route.params?.newPost]);
+  }, [route.params?.newPost, posts]);
 
   console.log("posts:", posts);
   return (
@@ -97,10 +120,10 @@ const ProfileScreen = () => {
               />
               <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => navigation.navigate("Login")}
+                
                 style={{ logOut, marginLeft: 190, marginTop: -24 }}
               >
-                <LogOut />
+                <LogOut onPress={handleLogout}/>
               </TouchableOpacity>
             </TouchableOpacity>
           </View>
@@ -111,7 +134,7 @@ const ProfileScreen = () => {
               marginTop: 92,
             }}
           >
-            Oleksandr Lysenko
+            {displayName}
           </Text>
 
           <FlatList

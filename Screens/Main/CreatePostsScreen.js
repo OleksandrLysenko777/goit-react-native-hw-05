@@ -64,7 +64,6 @@ const CreatePostsScreen = () => {
         };
         setPostLocation(coords);
       } else {
-        console.log("No coordinates found for the given address");
       }
     } catch (error) {
       console.error("Error while getting location:", error);
